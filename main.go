@@ -32,16 +32,15 @@ func main() {
 	flag.StringVar(&colorFlag, "color", "", "Specify the color for highlighting")
 	flag.Parse()
 
-	if len(os.Args) > 4 {
+	// will print above instructions in func if to many inputs
+	if len(os.Args) > 4 { 
 		flag.Usage()
 		os.Exit(1)
 	}
 	
-	lettersToColor := flag.Arg(0) //letters that we want to be in color
-	// fmt.Println("flag.Arg(0):", lettersToColor)
+	lettersToColor := flag.Arg(0) //letters/word that we want to be in color if 2 strings are provided/inputed  // fmt.Println("flag.Arg(0):", lettersToColor)
 
-	text := flag.Arg(1) // whole string
-	// fmt.Println("flag.Arg(1):", text)
+	text := flag.Arg(1) // whole string          // fmt.Println("flag.Arg(1):", text)
 
 	/* check wether lettersToColor is substring of text
 	if strings.Contains(text, lettersToColor) {
@@ -49,13 +48,11 @@ func main() {
 	}
 	*/
 	
+	// if there is no letters/word provided/inputed, first string becomes the text to be colored
 	if len(os.Args) == 3 {
 		text = flag.Arg(0)
 		lettersToColor = text
 	} 
-
-	fmt.Println("flag.Arg(0):", lettersToColor)
-	fmt.Println("flag.Arg(1):", text)
 	
 /*
 	textSlice := strings.Split(text, " ")
