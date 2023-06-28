@@ -28,7 +28,15 @@ func main() {
 		fmt.Println("Usage: go run . [OPTION] [STRING]")
 		fmt.Println("EX: go run . --color=<color> <letters to be colored> \"something\"")
 	}
-	var colorFlag string
+	var colorFlag string   // declaring a variable of type string which will be used to store the value of the "color" command-line argument.
+	/* This line uses the StringVar function from the flag package to define a new command-line flag. It takes four arguments:
+		&colorFlag:	This is a pointer to the variable colorFlag where the value of the flag will be stored.
+		"color": This is the name of the flag, specified without the leading dash (-). It indicates that the program expects a value for the "color" flag when executed from the command line.
+		"": This is the default value for the flag. If the user does not provide a value for the flag, colorFlag will be assigned this default value.
+		"Specify the color for highlighting": This is a string that describes the flag. It will be displayed when the user requests the program's help or usage information.
+		flag.Parse(): This line triggers the parsing of the command-line arguments. It scans the command-line arguments provided to the program and assigns the corresponding values to the defined flags. In this case, it will read the value for the "color" flag, if provided, and store it in the colorFlag variable.
+		After the flag.Parse() function call, the colorFlag variable will contain the value provided for the "color" flag (if any) or the default value specified.
+		*/
 	flag.StringVar(&colorFlag, "color", "", "Specify the color for highlighting")
 	flag.Parse()
 
@@ -52,6 +60,11 @@ func main() {
 	if len(os.Args) == 3 {
 		text = flag.Arg(0)
 		lettersToColor = text
+	}
+	
+	if len(colorFlag) == 0 {
+		flag.Usage()
+		os.Exit(2)
 	} 
 	
 /*
