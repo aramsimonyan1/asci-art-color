@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// do poprawek bo teraz przy  go run . --color=red aram "aram bravo" koloruje na czerwono aram *ra**
 func main() {
 	// reading standard.txt and convert to array of lines
 	readFile, err := os.Open("standard.txt")
@@ -36,10 +37,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	text := flag.Arg(0)
-	lettersToColor := flag.Arg(1)
+	lettersToColor := flag.Arg(0) //letters that we want to be in color
+	// fmt.Println("flag.Arg(0):", lettersToColor)
+
+	text := flag.Arg(1) // whole string
+	// fmt.Println("flag.Arg(1):", text)
+
+	/* check wether lettersToColor is substring of text
+	if strings.Contains(text, lettersToColor) {
+		fmt.Println("true")
+	}
+	*/
+
 	if lettersToColor == "" {
 		lettersToColor = text
+	}
+
+	textSlice := strings.Split(text, " ")
+	for _, word := range textSlice {
+		if word == lettersToColor {
+			//fmt.Println("yes")
+		}
 	}
 
 	// looking for "\n" and turn it into "n3wL1ne" so string.Split can find it
