@@ -32,11 +32,11 @@ func main() {
 	flag.StringVar(&colorFlag, "color", "", "Specify the color for highlighting")
 	flag.Parse()
 
-	if len(os.Args) < 2 {
+	if len(os.Args) > 4 {
 		flag.Usage()
 		os.Exit(1)
 	}
-
+	
 	lettersToColor := flag.Arg(0) //letters that we want to be in color
 	// fmt.Println("flag.Arg(0):", lettersToColor)
 
@@ -48,18 +48,24 @@ func main() {
 		fmt.Println("true")
 	}
 	*/
-
-	if lettersToColor == "" {
+	
+	if len(os.Args) == 3 {
+		text = flag.Arg(0)
 		lettersToColor = text
-	}
+	} 
 
+	fmt.Println("flag.Arg(0):", lettersToColor)
+	fmt.Println("flag.Arg(1):", text)
+	
+/*
 	textSlice := strings.Split(text, " ")
 	for _, word := range textSlice {
 		if word == lettersToColor {
 			//fmt.Println("yes")
 		}
 	}
-
+*/
+	
 	// looking for "\n" and turn it into "n3wL1ne" so string.Split can find it
 	preLine := []rune(text)
 	for m := 0; m < len(preLine); m++ {
@@ -116,8 +122,8 @@ func main() {
 			fmt.Println()
 		}
 	}
-}
 
+}
 // colorize applies the specified color to the text
 func colorize(text string, colorFlag string) string {
 	colorMapping := map[string]string{
