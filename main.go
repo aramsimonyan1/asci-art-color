@@ -8,74 +8,74 @@ import (
 	"strings"
 )
 
-// do poprawek bo teraz przy  go run . --color=red aram "aram bravo" koloruje na czerwono aram *ra**
 func main() {
-	// reading standard.txt and convert to array of lines
+	// read standard.txt and convert to array of lines
 	readFile, err := os.Open("standard.txt")
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
+	defer readFile.Close()
+
 	fileScanner := bufio.NewScanner(readFile)
 	fileScanner.Split(bufio.ScanLines)
 	var fileLines []string
 	for fileScanner.Scan() {
 		fileLines = append(fileLines, fileScanner.Text())
 	}
-	readFile.Close()
 
-	// get argument as a string
 	flag.Usage = func() {
 		fmt.Println("Usage: go run . [OPTION] [STRING]")
 		fmt.Println("EX: go run . --color=<color> <letters to be colored> \"something\"")
 	}
-	var colorFlag string   // declaring a variable of type string which will be used to store the value of the "color" command-line argument.
+
+	var colorFlag string // declaring a variable of type string which will be used to store the value of the "color" command-line argument.
+
 	/* This line uses the StringVar function from the flag package to define a new command-line flag. It takes four arguments:
-		&colorFlag:	This is a pointer to the variable colorFlag where the value of the flag will be stored.
-		"color": This is the name of the flag, specified without the leading dash (-). It indicates that the program expects a value for the "color" flag when executed from the command line.
-		"": This is the default value for the flag. If the user does not provide a value for the flag, colorFlag will be assigned this default value.
-		"Specify the color for highlighting": This is a string that describes the flag. It will be displayed when the user requests the program's help or usage information.
-		flag.Parse(): This line triggers the parsing of the command-line arguments. It scans the command-line arguments provided to the program and assigns the corresponding values to the defined flags. In this case, it will read the value for the "color" flag, if provided, and store it in the colorFlag variable.
-		After the flag.Parse() function call, the colorFlag variable will contain the value provided for the "color" flag (if any) or the default value specified.
-		*/
+	1. &colorFlag:	This is a pointer to the variable colorFlag where the value of the flag will be stored.
+	2. "color": This is the name of the flag, specified without the leading dash (-).
+	It indicates that the program expects a value for the "color" flag when executed from the command line.
+	3. "": This is the default value for the flag. If the user does not provide a value for the flag, colorFlag will be assigned this default value.
+	4. "Specify the color for highlighting": This is a string that describes the flag.
+	It will be displayed when the user requests the program's help or usage information. */
 	flag.StringVar(&colorFlag, "color", "", "Specify the color for highlighting")
+
+	/* 	This line triggers the parsing of the command-line arguments. It scans the command-line arguments provided to the program
+	and assigns the corresponding values to the defined flags. In this case, it will read the value for the "color" flag, if provided,
+	and store it in the colorFlag variable. After the flag.Parse() function call, the colorFlag variable will contain the value provided
+	for the "color" flag (if any) or the default value specified. */
 	flag.Parse()
 
-	// will print above instructions in func if to many inputs
-	if len(os.Args) > 4 { 
+	// will print instructions in func() if to many inputs
+	if len(os.Args) > 4 {
 		flag.Usage()
-		os.Exit(1)
+		os.Exit(2)
 	}
-	
-	lettersToColor := flag.Arg(0) //letters/word that we want to be in color if 2 strings are provided/inputed  // fmt.Println("flag.Arg(0):", lettersToColor)
 
-	text := flag.Arg(1) // whole string          // fmt.Println("flag.Arg(1):", text)
+	lettersToColor := flag.Arg(0) // letters/word that we want to be in color if 2 strings are provided/inputed  // fmt.Println("flag.Arg(0):", lettersToColor)
+	text := flag.Arg(1)           // whole string          // fmt.Println("flag.Arg(1):", text)
 
 	/* check wether lettersToColor is substring of text
 	if strings.Contains(text, lettersToColor) {
 		fmt.Println("true")
 	}
 	*/
-	
+
 	// if there is no letters/word provided/inputed, first string becomes the text to be colored
 	if len(os.Args) == 3 {
 		text = flag.Arg(0)
 		lettersToColor = text
 	}
-	
-	if len(colorFlag) == 0 {
-		flag.Usage()
-		os.Exit(2)
-	} 
-	
-/*
-	textSlice := strings.Split(text, " ")
-	for _, word := range textSlice {
-		if word == lettersToColor {
-			//fmt.Println("yes")
+
+	/*
+		textSlice := strings.Split(text, " ")
+		for _, word := range textSlice {
+			if word == lettersToColor {
+				//fmt.Println("yes")
+			}
 		}
-	}
-*/
-	
+	*/
+
 	// looking for "\n" and turn it into "n3wL1ne" so string.Split can find it
 	preLine := []rune(text)
 	for m := 0; m < len(preLine); m++ {
@@ -132,8 +132,8 @@ func main() {
 			fmt.Println()
 		}
 	}
-
 }
+
 // colorize applies the specified color to the text
 func colorize(text string, colorFlag string) string {
 	colorMapping := map[string]string{
