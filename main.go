@@ -2,102 +2,56 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"os"
 	"strings"
 )
+
+// Flag package not used so missing '=' triggers an error. But because code modification, /n doesn't work"
 
 func main() {
 	// read standard.txt and convert to array of lines
 	readFile, err := os.Open("standard.txt")
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
 	}
-	defer readFile.Close()
-
 	fileScanner := bufio.NewScanner(readFile)
 	fileScanner.Split(bufio.ScanLines)
 	var fileLines []string
 	for fileScanner.Scan() {
 		fileLines = append(fileLines, fileScanner.Text())
 	}
+	readFile.Close()
 
-	flag.Usage = func() {
-		fmt.Println("Usage: go run . [OPTION] [STRING]")
-		fmt.Println("EX: go run . --color=<color> <letters to be colored> \"something\"")
+	if len(os.Args) < 3 || len(os.Args) > 4 {
+		printUsage()
+		os.Exit(1)
 	}
 
-	var colorFlag string // declaring a variable of type string which will be used to store the value of the "color" command-line argument.
+	colorFlag := os.Args[1]
+	if !strings.HasPrefix(colorFlag, "--color=") {
+		fmt.Println("Error: Invalid format for --color flag. Please use --color=<color>")
+		printUsage()
+		os.Exit(1)
+	}
+	colorFlag = strings.TrimPrefix(colorFlag, "--color=")
 
-	/* This line uses the StringVar function from the flag package to define a new command-line flag. It takes four arguments:
-	1. &colorFlag:	This is a pointer to the variable colorFlag where the value of the flag will be stored.
-	2. "color": This is the name of the flag, specified without the leading dash (-).
-	It indicates that the program expects a value for the "color" flag when executed from the command line.
-	3. "": This is the default value for the flag. If the user does not provide a value for the flag, colorFlag will be assigned this default value.
-	4. "Specify the color for highlighting": This is a string that describes the flag.
-	It will be displayed when the user requests the program's help or usage information. */
-	flag.StringVar(&colorFlag, "color", "", "Specify the color for highlighting")
-
-	/* 	This line triggers the parsing of the command-line arguments. It scans the command-line arguments provided to the program
-	and assigns the corresponding values to the defined flags. In this case, it will read the value for the "color" flag, if provided,
-	and store it in the colorFlag variable. After the flag.Parse() function call, the colorFlag variable will contain the value provided
-	for the "color" flag (if any) or the default value specified. */
-	flag.Parse()
-
-	// will print instructions in func() if to many inputs
-	if len(os.Args) > 4 {
-		flag.Usage()
-		os.Exit(2)
+	lettersToColor := os.Args[2]
+	text := ""
+	if len(os.Args) == 4 {
+		text = os.Args[3]
+	} else {
+		text = lettersToColor
 	}
 
-	lettersToColor := flag.Arg(0) // letters/word that we want to be in color if 2 strings are provided/inputed  // fmt.Println("flag.Arg(0):", lettersToColor)
-	text := flag.Arg(1)           // whole string          // fmt.Println("flag.Arg(1):", text)
+	processText(text, lettersToColor, colorFlag, fileLines)
+}
 
-	/* check wether lettersToColor is substring of text
-	if strings.Contains(text, lettersToColor) {
-		fmt.Println("true")
-	}
-	*/
+func processText(text string, lettersToColor string, colorFlag string, fileLines []string) {
+	nextStep := text
+	line := strings.Split(nextStep, "\n")
 
-	// if there is no letters/word provided/inputed, first string becomes the text to be colored
-	if len(os.Args) == 3 {
-		text = flag.Arg(0)
-		lettersToColor = text
-	}
-
-	/*
-		textSlice := strings.Split(text, " ")
-		for _, word := range textSlice {
-			if word == lettersToColor {
-				//fmt.Println("yes")
-			}
-		}
-	*/
-
-	// looking for "\n" and turn it into "n3wL1ne" so string.Split can find it
-	preLine := []rune(text)
-	for m := 0; m < len(preLine); m++ {
-		arrayMiddle := "n3wL!Ne"
-		if preLine[m] == 92 && preLine[m+1] == 'n' {
-			array1 := preLine[0:m]
-			array2 := preLine[m+2:]
-			s1 := string([]rune(array1))
-			s2 := string([]rune(array2))
-			text = s1 + arrayMiddle + s2
-			preLine = ([]rune(text))
-		}
-	}
-
-	// split the text into lines if required
-	nextStep := string(preLine)
-	line := strings.Split(nextStep, "n3wL!Ne")
-
-	// loop to work on lines
 	for j := 0; j < len(line); j++ {
-
-		// to make or not make new lines in situations with no other text
 		if len(text) < 1 {
 			break
 		}
@@ -111,16 +65,9 @@ func main() {
 
 		word := []rune(line[j])
 
-		// row by row loop
 		for k := 1; k < 9; k++ {
-
-			// character by character loop
 			for i := 0; i < len(word); i++ {
 				m := rune(k)
-
-				// reduce each character value by 32 in ascii table,
-				// multiply by the 9 rows each character uses in standard.txt,
-				// add the row number
 				asciiFetch := ((word[i] - 32) * 9) + m
 
 				if strings.ContainsRune(lettersToColor, word[i]) {
@@ -134,7 +81,6 @@ func main() {
 	}
 }
 
-// colorize applies the specified color to the text
 func colorize(text string, colorFlag string) string {
 	colorMapping := map[string]string{
 		"red":    "\033[31m%s\033[0m",
@@ -151,4 +97,9 @@ func colorize(text string, colorFlag string) string {
 		return text
 	}
 	return fmt.Sprintf(format, text)
+}
+
+func printUsage() {
+	fmt.Println("Usage: go run . [OPTION] [STRING]")
+	fmt.Println("EX: go run . --color=<color> <letters to be colored> 'something'")
 }
