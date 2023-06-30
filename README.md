@@ -12,14 +12,15 @@ The output should manipulate colors using the flag --color=<color> <letters to b
 If there are other ascii-art optional projects implemented, the program should accept other correctly formatted [OPTION] and/or [BANNER]. Additionally, the program must still be able to run with a single [STRING] argument.
 
 # Instructions
-Your project must be written in Go.
-The code must respect the good practices.
-It is recommended to have test files for unit testing.
+    Your project must be written in Go.
+    The code must respect the good practices.
+    It is recommended to have test files for unit testing.
 
 # Allowed packages
-Only the standard Go packages are allowed
-This project will help you learn about :
-    The Go file system(fs) API
-    Color converters
-    Data manipulation
-    Terminal display
+    Only the standard Go packages are allowed
+
+    This project will help you learn about :
+        The Go file system(fs) API
+        Color converters
+        Data manipulation
+        Terminal display
