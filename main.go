@@ -92,10 +92,37 @@ func main() {
 
 // to handle/colorise single command line variable or two equal variables
 func process1Variable(text string, lettersToColor string, colorFlag string, fileLines []string) {
-	textSlice := []rune(text)
-	for k := 1; k < 9; k++ {
-		for i := 0; i < len(textSlice); i++ {
-			asciiFetch := ((textSlice[i] - 32) * 9) + rune(k)
+	/* to work with "\n" as new line, uncomment below code, replace line 122 with comment and use closing brackets at the bottom of this function
+	preLine := []rune(text)
+	for m := 0; m < len(preLine); m++ {
+		arrayMiddle := "n3wL!Ne"
+		if preLine[m] == 92 && preLine[m+1] == 'n' {
+			array1 := preLine[0:m]
+			array2 := preLine[m+2:]
+			s1 := string([]rune(array1))
+			s2 := string([]rune(array2))
+			text = s1 + arrayMiddle + s2
+			preLine = []rune(text)
+		}
+	}
+
+	line := strings.Split(string(preLine), "n3wL!Ne")
+	for i := 0; i < len(line); i++ {
+		if len(text) < 1 {
+			break
+		}
+		if len(line[i]) < 1 && i == 0 {
+			continue
+		}
+		if len(line[i]) < 1 {
+			fmt.Println()
+			continue
+		}
+	*/
+	textSlice := []rune(text) // textSlice := []rune(line[i])
+	for j := 1; j < 9; j++ {
+		for k := 0; k < len(textSlice); k++ {
+			asciiFetch := ((textSlice[k] - 32) * 9) + rune(j)
 			fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
 		}
 		fmt.Println()
@@ -136,11 +163,8 @@ func processNotEqualVariables(text string, lettersToColor string, colorFlag stri
 	}
 }
 
-/*
-	It creates a colorMapping map that maps color flags to their corresponding ANSI escape code formats. Each color fla
-
-is associated with a specific escape code that sets the text color in the terminal.
-*/
+// It creates a colorMapping map that maps color flags to their corresponding ANSI escape code formats.
+// Each color flag is associated with a specific escape code that sets the text color in the terminal.
 func colorize(text string, colorFlag string) string {
 	colorMapping := map[string]string{
 		"black":   "\033[30m%s\033[0m", // The %s placeholder in the escape code format is replaced with the text value, resulting in the colorized version of the text.
