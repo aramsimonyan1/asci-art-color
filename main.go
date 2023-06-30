@@ -7,7 +7,9 @@ import (
 	"strings"
 )
 
-// Flag package not used so missing '=' triggers an error. But because code modification, /n doesn't work"
+// Flag package not used so missing '=' triggers an error.
+// But because of code modification, /n doesn't work,
+// also matching lettersToColor with word in 'text' variable don't work "
 
 func main() {
 	// read standard.txt and convert to array of lines
@@ -46,27 +48,63 @@ func main() {
 	}
 
 	lenOfPrevWord := -1
-	if strings.Contains(text, lettersToColor) {
-		textSlice := strings.Split(text, " ")
-		for i, matchingWord := range textSlice {
-			if lettersToColor == matchingWord {
-				lenOfPrevWord = len(textSlice[i-1])
-			}
+	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "world"
+	if lettersToColor == text {
+		fmt.Println("processOneString")
+		fmt.Println(lettersToColor)
+		fmt.Println(text)
+		processOneString(text, lettersToColor, colorFlag, fileLines)
+	}
+
+	// works with:     --color=red world "hello world"      but not    --color=red hello "hello world"    and not with 3 words 'text'
+	textSlice := strings.Split(text, " ")
+	var matchingWord string
+	for i := 0; i < len(textSlice); i++ {
+		if lettersToColor == textSlice[i] {
+			matchingWord = textSlice[i]
+			lenOfPrevWord = len(textSlice[i-1])
+			fmt.Println("processMatchingWord")
+			fmt.Println("lettersToColor: ", lettersToColor)
+			fmt.Println("matchingWord: ", matchingWord)
+			fmt.Println("text: ", text)
+			processMatchingWord(text, lettersToColor, colorFlag, fileLines, lenOfPrevWord)
 		}
-		processTextWord(text, lettersToColor, colorFlag, fileLines, lenOfPrevWord)
-	} else {
-		processText(text, lettersToColor, colorFlag, fileLines)
+	}
+
+	/* work with different variables i.e.:
+	   Try specifying set of letters to be colored (the second until the last letter). --color=blue ram "Aram"
+	   Try specifying letter to be colored (the second letter).             --color=blue r "Aram"
+	   Try specifying a set of letters to be colored (just two letters).	--color=blue rm "Aram"
+	*/
+
+	if lettersToColor != text && lettersToColor != matchingWord {
+		fmt.Println("processNotEqualVariables")
+		fmt.Println(lettersToColor)
+		fmt.Println(text)
+		processNotEqualVariables(text, lettersToColor, colorFlag, fileLines)
 	}
 }
 
-func processTextWord(text string, lettersToColor string, colorFlag string, fileLines []string, lenOfPrevWord int) {
+// to handle single string input
+func processOneString(text string, lettersToColor string, colorFlag string, fileLines []string) {
+	word := []rune(text)
+	for k := 1; k < 9; k++ {
+		for i := 0; i < len(word); i++ {
+			asciiFetch := ((word[i] - 32) * 9) + rune(k)
+			fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
+		}
+		fmt.Println()
+	}
+}
+
+// to handle matching word in 'lettersToColor' with word in 'text'
+func processMatchingWord(text string, lettersToColor string, colorFlag string, fileLines []string, lenOfPrevWord int) {
 	textSlice := []rune(text)
 	for j := 1; j < 9; j++ {
 		for k := 0; k < len(textSlice); k++ {
-			m := rune(j)
-			asciiFetch := ((textSlice[k] - 32) * 9) + m
+			asciiFetch := ((textSlice[k] - 32) * 9) + rune(j)
 			letters := lenOfPrevWord + 1
-			if k == letters {
+			if k == letters || (k >= lenOfPrevWord && k <= letters+lenOfPrevWord+1) {
 				fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
 				letters++
 			} else {
@@ -77,49 +115,35 @@ func processTextWord(text string, lettersToColor string, colorFlag string, fileL
 	}
 }
 
-func processText(text string, lettersToColor string, colorFlag string, fileLines []string) {
-	nextStep := text
-	line := strings.Split(nextStep, "\n")
-
-	for j := 0; j < len(line); j++ {
-		if len(text) < 1 {
-			break
-		}
-		if len(line[j]) < 1 && j == 0 {
-			continue
-		}
-		if len(line[j]) < 1 {
-			fmt.Println()
-			continue
-		}
-
-		word := []rune(line[j])
-
-		for k := 1; k < 9; k++ {
-			for i := 0; i < len(word); i++ {
-				m := rune(k)
-				asciiFetch := ((word[i] - 32) * 9) + m
-
-				if strings.ContainsRune(lettersToColor, word[i]) {
-					fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
-				} else {
-					fmt.Print(fileLines[asciiFetch])
-				}
+// to match the letters in 'lettersToColor' with letters in 'text'
+func processNotEqualVariables(text string, lettersToColor string, colorFlag string, fileLines []string) {
+	word := []rune(text)
+	for j := 1; j < 9; j++ {
+		for k := 0; k < len(word); k++ {
+			asciiFetch := ((word[k] - 32) * 9) + rune(j)
+			if strings.ContainsRune(lettersToColor, word[k]) {
+				fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
+			} else {
+				fmt.Print(fileLines[asciiFetch])
 			}
-			fmt.Println()
 		}
+		fmt.Println()
 	}
 }
 
 func colorize(text string, colorFlag string) string {
 	colorMapping := map[string]string{
-		"red":    "\033[31m%s\033[0m",
-		"green":  "\033[32m%s\033[0m",
-		"yellow": "\033[33m%s\033[0m",
-		"blue":   "\033[34m%s\033[0m",
-		"purple": "\033[35m%s\033[0m",
-		"cyan":   "\033[36m%s\033[0m",
-		"white":  "\033[37m%s\033[0m",
+		"black":   "\033[30m%s\033[0m",
+		"red":     "\033[31m%s\033[0m",
+		"green":   "\033[32m%s\033[0m",
+		"yellow":  "\033[33m%s\033[0m",
+		"blue":    "\033[34m%s\033[0m",
+		"purple":  "\033[35m%s\033[0m",
+		"magenta": "\033[35m%s\033[0m",
+		"cyan":    "\033[36m%s\033[0m",
+		"white":   "\033[37m%s\033[0m",
+		"orange":  "\033[38;5;208m%s\033[0m",
+		"gray":    "\033[90m%s\033[0m",
 	}
 
 	format, found := colorMapping[colorFlag]
