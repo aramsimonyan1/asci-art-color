@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+func printUsage() {
+	fmt.Println("Usage: go run . [OPTION] [STRING]")
+	fmt.Println("EX: go run . --color=<color> <letters to be colored> 'something'")
+}
+
 func main() {
 	// read standard.txt and convert to array of lines
 	readFile, err := os.Open("standard.txt")
@@ -151,9 +156,4 @@ func colorize(text string, colorFlag string) string {
 		return text
 	}
 	return fmt.Sprintf(format, text)
-}
-
-func printUsage() {
-	fmt.Println("Usage: go run . [OPTION] [STRING]")
-	fmt.Println("EX: go run . --color=<color> <letters to be colored> 'something'")
 }
