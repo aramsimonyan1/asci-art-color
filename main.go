@@ -136,9 +136,14 @@ func processNotEqualVariables(text string, lettersToColor string, colorFlag stri
 	}
 }
 
+/*
+	It creates a colorMapping map that maps color flags to their corresponding ANSI escape code formats. Each color fla
+
+is associated with a specific escape code that sets the text color in the terminal.
+*/
 func colorize(text string, colorFlag string) string {
 	colorMapping := map[string]string{
-		"black":   "\033[30m%s\033[0m",
+		"black":   "\033[30m%s\033[0m", // The %s placeholder in the escape code format is replaced with the text value, resulting in the colorized version of the text.
 		"red":     "\033[31m%s\033[0m",
 		"green":   "\033[32m%s\033[0m",
 		"yellow":  "\033[33m%s\033[0m",
@@ -151,9 +156,11 @@ func colorize(text string, colorFlag string) string {
 		"gray":    "\033[90m%s\033[0m",
 	}
 
-	format, found := colorMapping[colorFlag]
-	if !found {
-		return text
+	/* It attempts to retrieve the escape code format for the given colorFlag from the colorMapping map using colorMapping[colorFlag].
+	The second variable found is a boolean flag indicating whether the colorFlag was found in the map. */
+	format, found := colorMapping[colorFlag] //If the colorFlag was found in the map, the corresponding escape code format is retrieved into the format variable
+	if !found {                              //If the colorFlag was not found in the map,
+		return text //the original text is returned as is, without any color formatting.
 	}
-	return fmt.Sprintf(format, text)
+	return fmt.Sprintf(format, text) //The fmt.Sprintf function is used to format the text using the format escape code.
 }
