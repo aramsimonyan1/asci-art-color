@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-// Flag package not used so missing '=' triggers an error.
-// But because of code modification, /n doesn't work,
-// also matching lettersToColor with word in 'text' variable don't work "
-
 func main() {
 	// read standard.txt and convert to array of lines
 	readFile, err := os.Open("standard.txt")
@@ -47,7 +43,6 @@ func main() {
 		text = lettersToColor
 	}
 
-	lenOfPrevWord := -1
 	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "world"
 	if lettersToColor == text {
 		fmt.Println("processOneString")
@@ -56,13 +51,13 @@ func main() {
 		processOneString(text, lettersToColor, colorFlag, fileLines)
 	}
 
-	// works with:     --color=red world "hello world"      but not    --color=red hello "hello world"    and not with 3 words 'text'
+	// works with:     --color=orange GuYs "HeY GuYs"      but not    --color=red hello "hello world"    and not with 3 words 'text'
 	textSlice := strings.Split(text, " ")
 	var matchingWord string
 	for i := 0; i < len(textSlice); i++ {
 		if lettersToColor == textSlice[i] {
-			matchingWord = textSlice[i]
-			lenOfPrevWord = len(textSlice[i-1])
+			matchingWord := textSlice[i]
+			lenOfPrevWord := len(textSlice[i-1])
 			fmt.Println("processMatchingWord")
 			fmt.Println("lettersToColor: ", lettersToColor)
 			fmt.Println("matchingWord: ", matchingWord)
@@ -74,9 +69,7 @@ func main() {
 	/* work with different variables i.e.:
 	   Try specifying set of letters to be colored (the second until the last letter). --color=blue ram "Aram"
 	   Try specifying letter to be colored (the second letter).             --color=blue r "Aram"
-	   Try specifying a set of letters to be colored (just two letters).	--color=blue rm "Aram"
-	*/
-
+	   Try specifying a set of letters to be colored (just two letters).	--color=blue rm "Aram"  */
 	if lettersToColor != text && lettersToColor != matchingWord {
 		fmt.Println("processNotEqualVariables")
 		fmt.Println(lettersToColor)
