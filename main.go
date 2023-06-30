@@ -38,13 +38,43 @@ func main() {
 
 	lettersToColor := os.Args[2]
 	text := ""
+
 	if len(os.Args) == 4 {
 		text = os.Args[3]
 	} else {
 		text = lettersToColor
 	}
 
-	processText(text, lettersToColor, colorFlag, fileLines)
+	lenOfPrevWord := -1
+	if strings.Contains(text, lettersToColor) {
+		textSlice := strings.Split(text, " ")
+		for i, matchingWord := range textSlice {
+			if lettersToColor == matchingWord {
+				lenOfPrevWord = len(textSlice[i-1])
+			}
+		}
+		processTextWord(text, lettersToColor, colorFlag, fileLines, lenOfPrevWord)
+	} else {
+		processText(text, lettersToColor, colorFlag, fileLines)
+	}
+}
+
+func processTextWord(text string, lettersToColor string, colorFlag string, fileLines []string, lenOfPrevWord int) {
+	textSlice := []rune(text)
+	for j := 1; j < 9; j++ {
+		for k := 0; k < len(textSlice); k++ {
+			m := rune(j)
+			asciiFetch := ((textSlice[k] - 32) * 9) + m
+			letters := lenOfPrevWord + 1
+			if k == letters {
+				fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
+				letters++
+			} else {
+				fmt.Print(fileLines[asciiFetch])
+			}
+		}
+		fmt.Println()
+	}
 }
 
 func processText(text string, lettersToColor string, colorFlag string, fileLines []string) {
