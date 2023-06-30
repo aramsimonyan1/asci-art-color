@@ -13,26 +13,27 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fileScanner := bufio.NewScanner(readFile)
-	fileScanner.Split(bufio.ScanLines)
-	var fileLines []string
-	for fileScanner.Scan() {
-		fileLines = append(fileLines, fileScanner.Text())
+	fileScanner := bufio.NewScanner(readFile) // creates a scanner (fileScanner) to read the contents of the opened file.
+	fileScanner.Split(bufio.ScanLines)        // configures the scanner to split the file content into lines based on newline characters ('\n').
+	var fileLines []string                    // declares an empty slice (fileLines) to store the lines read from the file.
+	for fileScanner.Scan() {                  // enters a loop that iterates until the scanner reaches the end of the file. In each iteration,
+		fileLines = append(fileLines, fileScanner.Text()) // it reads the next line from the file using fileScanner.Scan() and adds the line to the fileLines slice using fileScanner.Text()
 	}
 	readFile.Close()
 
-	if len(os.Args) < 3 || len(os.Args) > 4 {
+	if len(os.Args) < 3 || len(os.Args) > 4 { // if the number of command lines arguments are not within correct range
+		fmt.Println("Error: Invalid number of arguments")
 		printUsage()
 		os.Exit(1)
 	}
 
 	colorFlag := os.Args[1]
-	if !strings.HasPrefix(colorFlag, "--color=") {
+	if !strings.HasPrefix(colorFlag, "--color=") { // if the prefix of 1st argument is not --color=
 		fmt.Println("Error: Invalid format for --color flag. Please use --color=<color>")
 		printUsage()
-		os.Exit(1)
+		os.Exit(2)
 	}
-	colorFlag = strings.TrimPrefix(colorFlag, "--color=")
+	colorFlag = strings.TrimPrefix(colorFlag, "--color=") // get rid of --color=
 
 	lettersToColor := os.Args[2]
 	text := ""
@@ -43,12 +44,12 @@ func main() {
 		text = lettersToColor
 	}
 
-	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "world"
+	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "hello"
 	if lettersToColor == text {
-		fmt.Println("processOneString")
-		fmt.Println(lettersToColor)
-		fmt.Println(text)
-		processOneString(text, lettersToColor, colorFlag, fileLines)
+		fmt.Println("process1Variable") // these print lines are just for clarity of variable values and which function was called
+		fmt.Println("lettersToColor: ", lettersToColor)
+		fmt.Println("text: ", text)
+		process1Variable(text, lettersToColor, colorFlag, fileLines)
 	}
 
 	// works with:     --color=orange GuYs "HeY GuYs"      but not    --color=red hello "hello world"    and not with 3 words 'text'
@@ -56,48 +57,54 @@ func main() {
 	var matchingWord string
 	for i := 0; i < len(textSlice); i++ {
 		if lettersToColor == textSlice[i] {
-			matchingWord := textSlice[i]
-			lenOfPrevWord := len(textSlice[i-1])
-			fmt.Println("processMatchingWord")
+			matchingWord = textSlice[i]
+			var lenOfAdjacWord int
+			if len(textSlice) == 1 {
+				break
+			} else {
+				lenOfAdjacWord = len(textSlice[i-1])
+			}
+			fmt.Println("processMatchingWord") // these print lines are just for clarity of variable values and which function was called
 			fmt.Println("lettersToColor: ", lettersToColor)
 			fmt.Println("matchingWord: ", matchingWord)
 			fmt.Println("text: ", text)
-			processMatchingWord(text, lettersToColor, colorFlag, fileLines, lenOfPrevWord)
+			processMatchingWord(text, lettersToColor, colorFlag, fileLines, lenOfAdjacWord)
 		}
 	}
 
-	/* work with different variables i.e.:
+	/* works with command line variables that are not same i.e.:
 	   Try specifying set of letters to be colored (the second until the last letter). --color=blue ram "Aram"
 	   Try specifying letter to be colored (the second letter).             --color=blue r "Aram"
 	   Try specifying a set of letters to be colored (just two letters).	--color=blue rm "Aram"  */
 	if lettersToColor != text && lettersToColor != matchingWord {
-		fmt.Println("processNotEqualVariables")
-		fmt.Println(lettersToColor)
+		fmt.Println("processNotEqualVariables") // these print lines are just for clarity of variable values and which function was called
+		fmt.Println("lettersToColor: ", lettersToColor)
+		fmt.Println("matchingWord: ", matchingWord)
 		fmt.Println(text)
 		processNotEqualVariables(text, lettersToColor, colorFlag, fileLines)
 	}
 }
 
-// to handle single string input
-func processOneString(text string, lettersToColor string, colorFlag string, fileLines []string) {
-	word := []rune(text)
+// to handle/colorise single command line variable or two equal variables
+func process1Variable(text string, lettersToColor string, colorFlag string, fileLines []string) {
+	textSlice := []rune(text)
 	for k := 1; k < 9; k++ {
-		for i := 0; i < len(word); i++ {
-			asciiFetch := ((word[i] - 32) * 9) + rune(k)
+		for i := 0; i < len(textSlice); i++ {
+			asciiFetch := ((textSlice[i] - 32) * 9) + rune(k)
 			fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
 		}
 		fmt.Println()
 	}
 }
 
-// to handle matching word in 'lettersToColor' with word in 'text'
-func processMatchingWord(text string, lettersToColor string, colorFlag string, fileLines []string, lenOfPrevWord int) {
+// to handle/colorise matching word in 'text' variable that is the same as 'lettersToColor'
+func processMatchingWord(text string, lettersToColor string, colorFlag string, fileLines []string, lenOfAdjacWord int) {
 	textSlice := []rune(text)
 	for j := 1; j < 9; j++ {
 		for k := 0; k < len(textSlice); k++ {
 			asciiFetch := ((textSlice[k] - 32) * 9) + rune(j)
-			letters := lenOfPrevWord + 1
-			if k == letters || (k >= lenOfPrevWord && k <= letters+lenOfPrevWord+1) {
+			letters := lenOfAdjacWord + 1
+			if k == letters || (k >= lenOfAdjacWord && k <= letters+lenOfAdjacWord+1) {
 				fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
 				letters++
 			} else {
@@ -108,13 +115,13 @@ func processMatchingWord(text string, lettersToColor string, colorFlag string, f
 	}
 }
 
-// to match the letters in 'lettersToColor' with letters in 'text'
+// to match the characters in 'lettersToColor' with letters in 'text' when there is no same/matching words
 func processNotEqualVariables(text string, lettersToColor string, colorFlag string, fileLines []string) {
-	word := []rune(text)
+	textSlice := []rune(text)
 	for j := 1; j < 9; j++ {
-		for k := 0; k < len(word); k++ {
-			asciiFetch := ((word[k] - 32) * 9) + rune(j)
-			if strings.ContainsRune(lettersToColor, word[k]) {
+		for k := 0; k < len(textSlice); k++ {
+			asciiFetch := ((textSlice[k] - 32) * 9) + rune(j)
+			if strings.ContainsRune(lettersToColor, textSlice[k]) {
 				fmt.Printf("%s", colorize(fileLines[asciiFetch], colorFlag))
 			} else {
 				fmt.Print(fileLines[asciiFetch])
