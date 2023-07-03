@@ -21,8 +21,8 @@ func main() {
 	fileScanner := bufio.NewScanner(readFile) // creates a scanner (fileScanner) to read the contents of the opened file.
 	fileScanner.Split(bufio.ScanLines)        // configures the scanner to split the file content into lines based on newline characters ('\n').
 	var fileLines []string                    // declares an empty slice (fileLines) to store the lines read from the file.
-	for fileScanner.Scan() {                  // enters a loop that iterates until the scanner reaches the end of the file. In each iteration,
-		fileLines = append(fileLines, fileScanner.Text()) // it reads the next line from the file using fileScanner.Scan() and adds the line to the fileLines slice using fileScanner.Text()
+	for fileScanner.Scan() {                  // enters a loop that iterates until the scanner reaches the end of the file. In each iteration, it reads the next line
+		fileLines = append(fileLines, fileScanner.Text()) // from the file using fileScanner.Scan() and adds the line to the fileLines slice using fileScanner.Text()
 	}
 	readFile.Close()
 
@@ -49,6 +49,24 @@ func main() {
 		text = lettersToColor
 	}
 
+	textSlice := strings.Split(text, " ")
+
+	// works when LettersToCpolo is equal as all slices of 'text'    --color=red "hello" "hello hello"
+	LTCequalToSecVarSlices := false
+	for i := 0; i < len(textSlice); i++ {
+		if lettersToColor != text && lettersToColor == textSlice[i] {
+			LTCequalToSecVarSlices = true
+		} else {
+			LTCequalToSecVarSlices = false
+		}
+	}
+	if !LTCequalToSecVarSlices {
+		fmt.Println("process1Variable for LTCequalToSecVarSlices") // these print lines are just for clarity of variable values and which function was called
+		fmt.Println("lettersToColor: ", lettersToColor)
+		fmt.Println("text: ", text)
+		process1Variable(text, text, colorFlag, fileLines)
+	}
+
 	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "hello"
 	if lettersToColor == text {
 		fmt.Println("process1Variable") // these print lines are just for clarity of variable values and which function was called
@@ -58,13 +76,15 @@ func main() {
 	}
 
 	// works with:     --color=orange GuYs "HeY GuYs"      but not    --color=red hello "hello world"    and not with 3 words 'text'
-	textSlice := strings.Split(text, " ")
 	var matchingWord string
 	for i := 0; i < len(textSlice); i++ {
 		if lettersToColor == textSlice[i] {
 			matchingWord = textSlice[i]
 			var lenOfAdjacWord int
 			if len(textSlice) == 1 {
+				break
+			}
+			if lettersToColor == textSlice[0] {
 				break
 			} else {
 				lenOfAdjacWord = len(textSlice[i-1])
@@ -84,8 +104,7 @@ func main() {
 	if lettersToColor != text && lettersToColor != matchingWord {
 		fmt.Println("processNotEqualVariables") // these print lines are just for clarity of variable values and which function was called
 		fmt.Println("lettersToColor: ", lettersToColor)
-		fmt.Println("matchingWord: ", matchingWord)
-		fmt.Println(text)
+		fmt.Println("text: ", text)
 		processNotEqualVariables(text, lettersToColor, colorFlag, fileLines)
 	}
 }
@@ -182,9 +201,9 @@ func colorize(text string, colorFlag string) string {
 
 	/* It attempts to retrieve the escape code format for the given colorFlag from the colorMapping map using colorMapping[colorFlag].
 	The second variable found is a boolean flag indicating whether the colorFlag was found in the map. */
-	format, found := colorMapping[colorFlag] //If the colorFlag was found in the map, the corresponding escape code format is retrieved into the format variable
-	if !found {                              //If the colorFlag was not found in the map,
-		return text //the original text is returned as is, without any color formatting.
+	format, found := colorMapping[colorFlag] // If the colorFlag was found in the map, the corresponding escape code format is retrieved into the format variable
+	if !found {                              // If the colorFlag was not found in the map,
+		return text // the original text is returned as is, without any color formatting.
 	}
-	return fmt.Sprintf(format, text) //The fmt.Sprintf function is used to format the text using the format escape code.
+	return fmt.Sprintf(format, text) // The fmt.Sprintf function is used to format the text using the format escape code.
 }
