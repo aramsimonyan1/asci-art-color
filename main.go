@@ -51,7 +51,7 @@ func main() {
 
 	textSlice := strings.Split(text, " ")
 
-	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "hello"
+	// called when:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "hello"
 	if text == os.Args[2] {
 		fmt.Println("process1Variable") // these print lines are just for clarity of variable values and which function was called
 		fmt.Println("lettersToColor: ", lettersToColor)
@@ -59,8 +59,8 @@ func main() {
 		process1Variable(text, text, colorFlag, fileLines)
 	}
 
-	// works when LettersToColor is equal as all slices of 'text'    --color=red "hello" "hello hello"
-	LTCequalToSecVarSlices := false
+	// called when LettersToColor is equal as all slices of 'text'    --color=red "hello" "hello hello"
+	LTCequalToTextSlices := false
 	if len(textSlice) > 1 {
 		count := 0
 		for i := 0; i < len(textSlice); i++ {
@@ -69,14 +69,14 @@ func main() {
 			}
 		}
 		if count == len(textSlice) {
-			LTCequalToSecVarSlices = true
+			LTCequalToTextSlices = true
 		}
 	}
-	if lettersToColor != text && LTCequalToSecVarSlices && lettersToColor == os.Args[2] {
-		fmt.Println("process1Variable for LTCequalToSecVarSlices") // these print lines are just for clarity of variable values and which function was called
+	if lettersToColor != text && LTCequalToTextSlices {
+		fmt.Println("process1Variable for LTCequalToTextSlices") // these print lines are just for clarity of variable values and which function was called
 		fmt.Println("textslice length: ", len(textSlice))
 		fmt.Println("lettersToColor: ", lettersToColor)
-		fmt.Println("LTCequalToSecVarSlices: ", LTCequalToSecVarSlices)
+		fmt.Println("LTCequalToTextSlices: ", LTCequalToTextSlices)
 		fmt.Println("text: ", text)
 		process1Variable(text, lettersToColor, colorFlag, fileLines)
 	}
@@ -86,7 +86,7 @@ func main() {
 	for i := 0; i < len(textSlice); i++ {
 		if lettersToColor == textSlice[i] {
 			matchingWord = textSlice[i]
-			var lenOfAdjacWord int
+			var lenOfAdjacWord int // will be used as function argument
 			if len(textSlice) == 1 {
 				break
 			}
@@ -102,7 +102,7 @@ func main() {
 		}
 	}
 
-	/* works with command line variables that are not same i.e.:
+	/* called when command line variables that are not same e.g.:
 	   Try specifying set of letters to be colored (the second until the last letter). --color=blue ram "Aram"
 	   Try specifying letter to be colored (the second letter).             --color=blue r "Aram"
 	   Try specifying a set of letters to be colored (just two letters).	--color=blue rm "Aram"  */
@@ -114,9 +114,9 @@ func main() {
 	}
 }
 
-// to handle/colorise single command line variable or two equal variables
+// called when there is single command line variable (text == os.Args[2]) or two equal variables
 func process1Variable(text string, lettersToColor string, colorFlag string, fileLines []string) {
-	/* to work with "\n" as new line, uncomment below code, replace line 122 with comment and use closing brackets at the bottom of this function
+	/* to work with "\n" as new line, uncomment below code, replace line 146 with comment and use closing brackets at the bottom of this function
 	preLine := []rune(text)
 	for m := 0; m < len(preLine); m++ {
 		arrayMiddle := "n3wL!Ne"
@@ -153,7 +153,7 @@ func process1Variable(text string, lettersToColor string, colorFlag string, file
 	}
 }
 
-// to handle/colorise matching word in 'text' variable that is the same as 'lettersToColor'
+// called when second slice of 'text' variable is same as 'lettersToColor'
 func processMatchingWord(text string, lettersToColor string, colorFlag string, fileLines []string, lenOfAdjacWord int) {
 	textSlice := []rune(text)
 	for j := 1; j < 9; j++ {
@@ -171,7 +171,7 @@ func processMatchingWord(text string, lettersToColor string, colorFlag string, f
 	}
 }
 
-// to match the characters in 'lettersToColor' with letters in 'text' when there is no same/matching words
+// colorise the characters of 'lettersToColor' in 'text' when there is no same/matching words
 func processNotEqualVariables(text string, lettersToColor string, colorFlag string, fileLines []string) {
 	textSlice := []rune(text)
 	for j := 1; j < 9; j++ {
