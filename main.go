@@ -40,37 +40,43 @@ func main() {
 	}
 	colorFlag = strings.TrimPrefix(colorFlag, "--color=") // get rid of --color=
 
-	lettersToColor := os.Args[2]
-	text := ""
+	var lettersToColor, text string
 
-	if len(os.Args) == 4 {
-		text = os.Args[3]
+	if len(os.Args) == 3 {
+		text = os.Args[2]
 	} else {
-		text = lettersToColor
+		lettersToColor = os.Args[2]
+		text = os.Args[3]
 	}
 
 	textSlice := strings.Split(text, " ")
 
-	// works when LettersToCpolo is equal as all slices of 'text'    --color=red "hello" "hello hello"
-	LTCequalToSecVarSlices := false
-	for i := 0; i < len(textSlice); i++ {
-		if lettersToColor != text && lettersToColor == textSlice[i] {
-			LTCequalToSecVarSlices = true
-		} else {
-			LTCequalToSecVarSlices = false
-		}
-	}
-	if !LTCequalToSecVarSlices {
-		fmt.Println("process1Variable for LTCequalToSecVarSlices") // these print lines are just for clarity of variable values and which function was called
+	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "hello"
+	if text == os.Args[2] {
+		fmt.Println("process1Variable") // these print lines are just for clarity of variable values and which function was called
 		fmt.Println("lettersToColor: ", lettersToColor)
 		fmt.Println("text: ", text)
 		process1Variable(text, text, colorFlag, fileLines)
 	}
 
-	// works with:     --color=red "hello world" "hello world"    or    --color=red "hello world"    or    --color=red "hello"
-	if lettersToColor == text {
-		fmt.Println("process1Variable") // these print lines are just for clarity of variable values and which function was called
+	// works when LettersToColor is equal as all slices of 'text'    --color=red "hello" "hello hello"
+	LTCequalToSecVarSlices := false
+	if len(textSlice) > 1 {
+		count := 0
+		for i := 0; i < len(textSlice); i++ {
+			if lettersToColor != text && lettersToColor == textSlice[i] {
+				count++
+			}
+		}
+		if count == len(textSlice) {
+			LTCequalToSecVarSlices = true
+		}
+	}
+	if lettersToColor != text && LTCequalToSecVarSlices && lettersToColor == os.Args[2] {
+		fmt.Println("process1Variable for LTCequalToSecVarSlices") // these print lines are just for clarity of variable values and which function was called
+		fmt.Println("textslice length: ", len(textSlice))
 		fmt.Println("lettersToColor: ", lettersToColor)
+		fmt.Println("LTCequalToSecVarSlices: ", LTCequalToSecVarSlices)
 		fmt.Println("text: ", text)
 		process1Variable(text, lettersToColor, colorFlag, fileLines)
 	}
@@ -91,7 +97,6 @@ func main() {
 			}
 			fmt.Println("processMatchingWord") // these print lines are just for clarity of variable values and which function was called
 			fmt.Println("lettersToColor: ", lettersToColor)
-			fmt.Println("matchingWord: ", matchingWord)
 			fmt.Println("text: ", text)
 			processMatchingWord(text, lettersToColor, colorFlag, fileLines, lenOfAdjacWord)
 		}
