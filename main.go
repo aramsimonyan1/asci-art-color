@@ -9,7 +9,7 @@ import (
 
 func printUsage() {
 	fmt.Println("Usage: go run . [OPTION] [STRING]")
-	fmt.Println("EX: go run . --color=<color> <letters to be colored> 'something'")
+	fmt.Println("EX: go run . --color=<color> <letters to be colored>")
 }
 
 func main() {

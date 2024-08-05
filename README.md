@@ -1,26 +1,68 @@
-# Objectives
-You must follow the same instructions as in the first subject but this time with colors.
+# ascii-art-color
 
-The output should manipulate colors using the flag --color=<color> <letters to be colored>, in which --color is the flag and <color> is the color desired by the user and <letters to be colored> is the letter or letters that you can chose to be colored. These colors can be achieved using different notations (color code systems, like RGB, hsl, ANSI...), it is up to you to choose which one you want to use.
+## Objectives
+Same as in the ascii-art project but this time with colors.
 
-    You should be able to choose between coloring a single letter or a set of letters.
-    If the letter is not specified, the whole string should be colored.
-    The flag must have exactly the same format as above, any other formats must return the following usage message:
+The output should manipulate colors using the flag --color=<color> <letters to be colored>, in which --color is the flag and <color> is the color desired by the user and <letters to be colored> is the letter or letters that you can chose to be colored. 
+
+    You can choose between coloring a single letter or a set of letters.
+    If the letter is not specified, the whole string will be colored.
+    The flag must have exactly the same format as above, any other formats will return the following usage message:
         Usage: go run . [OPTION] [STRING]
-        EX: go run . --color=<color> <letters to be colored> "something"
+        EX: go run . --color=<color> <letters to be colored>
 
-If there are other ascii-art optional projects implemented, the program should accept other correctly formatted [OPTION] and/or [BANNER]. Additionally, the program must still be able to run with a single [STRING] argument.
 
-# Instructions
-    Your project must be written in Go.
-    The code must respect the good practices.
-    It is recommended to have test files for unit testing.
+## Allowed packages
+    Only the standard Go packages.
 
-# Allowed packages
-    Only the standard Go packages are allowed
+    Key features include:
+    Converting plain text into ASCII art using a predefined standard.txt file.
+    Allowing users to highlight specific words or letters in various colors using a --color=<color> flag, supporting colors such as red, green, yellow, blue, purple, cyan, and white.
+    Exact Word Matching: Ensures only the exact words/letters specified by the user are colorized, maintaining the integrity of the ASCII art for other text segments.
+    Designed to be intuitive and easy to use, requiring minimal input while offering versatile output customization.
 
-    This project will help you learn about :
-        The Go file system(fs) API
-        Color converters
-        Data manipulation
-        Terminal display
+
+## Usage 
+###
+    With below command the output will be in red 
+    $ go run . --color=red "hello"
+     _              _   _          $
+    | |            | | | |         $
+    | |__     ___  | | | |   ___   $
+    |  _ \   / _ \ | | | |  / _ \  $
+    | | | | |  __/ | | | | | (_) | $
+    |_| |_|  \___| |_| |_|  \___/  $
+                                   $
+                                   $
+
+
+    With below command both words will be in displayed in blue 
+    $ go run . --color=blue "hello world"
+     _              _   _                                           _       _
+    | |            | | | |                                         | |     | |
+    | |__     ___  | | | |   ___         __      __   ___    _ __  | |   __| |
+    |  _ \   / _ \ | | | |  / _ \        \ \ /\ / /  / _ \  | '__| | |  / _` |
+    | | | | |  __/ | | | | | (_) |        \ V  V /  | (_) | | |    | | | (_| |
+    |_| |_|  \___| |_| |_|  \___/          \_/\_/    \___/  |_|    |_|  \__,_|
+
+
+
+    While this will colorize in yellow both 'o' in 'hello world' 
+    $ go run . --color=yellow "o" "hello world"
+     _              _   _                                           _       _
+    | |            | | | |                                         | |     | |
+    | |__     ___  | | | |   ___         __      __   ___    _ __  | |   __| |
+    |  _ \   / _ \ | | | |  / _ \        \ \ /\ / /  / _ \  | '__| | |  / _` |
+    | | | | |  __/ | | | | | (_) |        \ V  V /  | (_) | | |    | | | (_| |
+    |_| |_|  \___| |_| |_|  \___/          \_/\_/    \___/  |_|    |_|  \__,_|
+
+
+
+    This will colorize 'hello world' in green     
+    $ go run . --color=yellow "hello world" "hello world"
+     _              _   _                                           _       _
+    | |            | | | |                                         | |     | |
+    | |__     ___  | | | |   ___         __      __   ___    _ __  | |   __| |
+    |  _ \   / _ \ | | | |  / _ \        \ \ /\ / /  / _ \  | '__| | |  / _` |
+    | | | | |  __/ | | | | | (_) |        \ V  V /  | (_) | | |    | | | (_| |
+    |_| |_|  \___| |_| |_|  \___/          \_/\_/    \___/  |_|    |_|  \__,_|
